@@ -12,11 +12,15 @@ add_entry()
 	hostname=$2
 	hosts_path=$3
 	
-	if check_entry $ip $hostname $hosts_path then;
+	if check_entry_exists $ip $hostname $hosts_path ;then		
+		echo ""
 		echo "Entry for specified Hostname: $hostname already exists"
+		echo ""
 	else
-		echo >> "$ip	$hostname"
+		echo "$ip	$hostname" >> $hosts_path 
+		echo ""
 		echo "Entry: \"$ip	$hostname\"  was added"
+		echo ""
 	fi
 }
 
@@ -26,11 +30,15 @@ remove_entry()
         hostname=$2
         hosts_path=$3
 
-  	if check_entry $ip $hostname $hosts_path then;
-		sed '/$hostname/d' $hosts_path -i
+  	if check_entry_exists $ip $hostname $hosts_path ;then
+		sed "/$hostname/d" $hosts_path -i		
+		echo ""
 		echo "Entry: \"$ip      $hostname\"  was removed"
+		echo ""
         else
-                echo >> "Entry for the specified Hostname: $hostname does not exist"
+		echo ""
+                echo  "Entry for the specified Hostname: $hostname does not exist"
+		echo ""
         fi	
 
 }
@@ -61,7 +69,7 @@ for arg in "$@"
 do
     case $arg in
 	-add|-remove)	        
-	if [ $arg = "-add" ]; then
+	if [ $arg = "-add" ] ;then
 		remove_or_add_entry=1
 	else
 		remove_or_add_entry=0
@@ -83,13 +91,15 @@ do
     esac
 done
 
-if [ $remove_or_add_entry -eq 1 ] then;
+
+if [ $remove_or_add_entry -eq 1 ] ;then
 	add_entry $ip $hostname $hosts_path
-elif [ $remove_or_add_entry -eq 0 ] then;
+elif [ $remove_or_add_entry -eq 0 ] ;then
 	remove_entry $ip $hostname $hosts_path
 else
+	echo ""
 	echo "Please supply action: remove/add"
-
+	echo ""
 fi
 
 
